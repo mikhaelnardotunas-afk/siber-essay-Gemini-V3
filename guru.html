@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2e8fd8">
+  <title>Dashboard Guru — Petualangan Ujian</title>
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }, options: { enableMenu: false }, startup: { typeset: false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script>
+  <script src="config.js"></script>
+  <style>
+/* Modern Dashboard Override */
+body.guru {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) fixed !important;
+  color: #e2e8f0;
+}
+.guru .scene { display: none; }
+.guru .board {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #f8fafc !important;
+}
+.guru .board::before, .guru .board::after { display: none !important; }
+.guru .board-title, .guru h2, .guru h3, .guru h4 { color: #f8fafc !important; }
+.guru .board-sub, .guru .muted, .guru .lbl { color: #94a3b8 !important; }
+.guru .topbar .brand-name {
+  text-shadow: none !important;
+  background: linear-gradient(to right, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.guru .btn {
+  border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #3b82f6, #4f46e5) !important;
+  color: white !important; text-shadow: none !important;
+}
+.guru .btn-green { background: linear-gradient(135deg, #10b981, #059669) !important; }
+.guru .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626) !important; }
+.guru .btn-wood { background: linear-gradient(135deg, #64748b, #475569) !important; }
+.guru .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: white !important; }
+.guru .btn:active:not(:disabled) { transform: scale(0.95) !important; box-shadow: none !important; }
+.guru .input {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: white !important; box-shadow: none !important;
+}
+.guru .input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 3px rgba(56,189,248,0.2) !important; }
+.guru .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
+.guru .tab {
+  background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: none !important; text-shadow: none !important; border-radius: 12px !important; color: #cbd5e1 !important;
+}
+.guru .tab[aria-selected="true"] { background: linear-gradient(135deg, #38bdf8, #3b82f6) !important; color: white !important; border-color: transparent !important; }
+.guru .tbl th { background: rgba(15, 23, 42, 0.8) !important; color: #f8fafc !important; border-bottom: 2px solid rgba(255,255,255,0.1) !important; }
+.guru .tbl td { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+.guru .tbl tr:hover td { background: rgba(255,255,255,0.02) !important; }
+.guru .table-wrap { background: transparent !important; border: none !important; box-shadow: none !important; }
+.guru .stat { background: rgba(15, 23, 42, 0.6) !important; border: 1px solid rgba(255,255,255,0.05) !important; box-shadow: none !important; }
+.guru .stu { background: rgba(15, 23, 42, 0.6) !important; border: 1px solid rgba(255,255,255,0.05) !important; box-shadow: none !important; border-left: 4px solid #64748b !important; }
+.guru .stu.MENGERJAKAN { border-left-color: #ef4444 !important; }
+.guru .stu.SELESAI { border-left-color: #f59e0b !important; }
+.guru .stu.TERKIRIM { border-left-color: #3b82f6 !important; }
+.guru .pill { background: rgba(255,255,255,0.1) !important; border: none !important; color:#cbd5e1 !important; }
+.guru .pill.DINILAI { background: rgba(16, 185, 129, 0.2) !important; color: #34d399 !important; }
+.guru .pill.ERROR { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+.guru .pill.ok { background: rgba(16, 185, 129, 0.2) !important; color: #34d399 !important; }
+.guru .detail-item { background: rgba(15, 23, 42, 0.6) !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+.guru .box { background: rgba(255,255,255,0.05) !important; color: white !important; }
+.guru .modal { background: #1e293b !important; border-radius: 20px !important; color: white !important; }
+.guru .field > span { color: #94a3b8 !important; }
+.guru details > summary { color: #38bdf8 !important; }
+  </style>
+</head>
+<body class="guru">
+  <div class="scene" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div>
+    <svg class="hills" viewBox="0 0 1200 300" preserveAspectRatio="none">
+      <path d="M0 170 C150 90 300 90 450 160 C600 230 700 80 900 120 C1030 145 1120 110 1200 130 V300 H0Z" fill="#8ed36a"/>
+      <path d="M0 220 C200 150 350 200 520 210 C700 220 820 150 1000 180 C1100 195 1160 190 1200 185 V300 H0Z" fill="#63bf3b"/>
+      <path d="M0 262 C300 245 600 270 900 252 C1050 244 1150 255 1200 250 V300 H0Z" fill="#3b8a20"/>
+    </svg>
+  </div>
+
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="assets/maskot.svg" alt="">
+        <div>
+          <div class="brand-name">Markas Guru</div>
+          <div class="brand-sub" id="gSekolah">Dashboard ujian</div>
+        </div>
+      </div>
+      <div class="row" style="flex-wrap:nowrap">
+        <span class="net" id="net"></span>
+        <button class="btn btn-wood btn-sm hidden" id="btnKeluar">Keluar</button>
+      </div>
+    </header>
+
+    <!-- Login guru -->
+    <section class="screen" id="g-login">
+      <form class="board" id="formGuru" style="max-width:440px;margin:30px auto">
+        <h2 class="board-title">Masuk sebagai guru</h2>
+        <p class="board-sub">Password diatur di sheet PENGATURAN (PASSWORD_GURU).</p>
+        <label class="field"><span>Password guru</span>
+          <input class="input" type="password" id="inGuruPw" required autocomplete="current-password">
+        </label>
+        <button class="btn btn-green btn-block btn-lg" type="submit">Masuk</button>
+        <p class="small" id="gMsg" style="color:var(--red-d);font-weight:800;min-height:1.2em"></p>
+      </form>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="screen" id="g-main">
+      <div class="board">
+        <div class="toolbar-guru">
+          <select class="input" id="selPaket" aria-label="Pilih paket ujian"></select>
+          <label class="small" style="display:flex;gap:6px;align-items:center;font-weight:800">
+            <input type="checkbox" id="autoRefresh" checked> Segarkan otomatis
+          </label>
+          <button class="btn btn-blue btn-sm" id="btnRefresh">Segarkan</button>
+        </div>
+        <p class="small muted" id="paketInfo" style="margin:0"></p>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-tab="t-pantau">Pantau langsung</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-hasil">Hasil &amp; nilai</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-siswa">Siswa &amp; HP</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-laporan">Laporan PDF</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-token">Token</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-master-siswa">Data Siswa</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-master-paket">Paket Soal</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="t-master-soal">Bank Soal</button>
+      </div>
+
+      <div class="board tabpane" id="t-pantau">
+        <div class="stats" id="stats"></div>
+        <div class="toolbar-guru">
+          <input class="input" id="cariPantau" placeholder="Cari nama siswa…">
+          <select class="input" id="filterKelas" style="flex:0 1 180px" aria-label="Filter kelas"></select>
+        </div>
+        <div class="students" id="students"></div>
+      </div>
+
+      <div class="board tabpane hidden" id="t-hasil">
+        <div class="toolbar-guru">
+          <button class="btn btn-gold btn-sm" id="btnNilaiSemua">Nilai semua yang tertunda (AI)</button>
+          <button class="btn btn-green btn-sm" id="btnCSV">Unduh CSV (Excel)</button>
+          <input class="input" id="cariHasil" placeholder="Cari nama…">
+        </div>
+        <div class="stats" id="statsHasil"></div>
+        <div class="table-wrap">
+          <table class="tbl" id="tblHasil">
+            <thead><tr>
+              <th data-s="n">Nama</th><th data-s="k">Kelas</th><th data-s="pg">PG</th><th data-s="es">Essay</th><th data-s="nilai">Nilai</th>
+              <th data-s="status">Status</th><th data-s="pel">Pelanggaran</th><th data-s="dur">Durasi</th><th data-s="t">Dikirim</th><th></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="board tabpane hidden" id="t-siswa">
+        <p class="board-sub">Login yang dilakukan saat offline akan muncul setelah HP tersebut kembali online.</p>
+        <div class="stats" id="statsSiswa"></div>
+        <h3 class="section-title">Siswa</h3>
+        <div class="toolbar-guru">
+          <input class="input" id="cariSiswa" placeholder="Cari nama siswa…">
+          <select class="input" id="filterKelasSiswa" style="flex:0 1 180px" aria-label="Filter kelas"></select>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tblSiswa">
+            <thead><tr><th>Nama</th><th>Kelas</th><th>Data kelas di HP</th><th>Login terakhir</th><th>HP dipakai</th><th>Jml login</th><th>Ujian ini</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3 class="section-title">Perangkat (HP) yang mengunduh data</h3>
+        <div class="table-wrap">
+          <table class="tbl" id="tblHP">
+            <thead><tr><th>ID HP</th><th>Perangkat</th><th>Kelas diunduh</th><th>Ujian ini ada?</th><th>Unduh terakhir</th><th>Online terakhir</th><th>Belum terkirim</th><th>Jml login</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="board tabpane hidden" id="t-laporan">
+        <p class="board-sub">Laporan dibuka di tab baru. Tekan <b>Cetak / Simpan PDF</b>, lalu pilih tujuan <b>Simpan sebagai PDF</b>.</p>
+        <form id="formLaporan">
+          <div class="lap-grid">
+            <label class="field"><span>Jenis laporan</span>
+              <select class="input" id="lapJenis">
+                <option value="rekap">Rekap nilai satu ujian</option>
+                <option value="detail">Lembar jawaban per siswa</option>
+                <option value="kelas">Rekap semua ujian per kelas</option>
+                <option value="mapel">Rekap per mata pelajaran</option>
+                <option value="siswa">Riwayat nilai satu siswa</option>
+              </select>
+            </label>
+            <label class="field" data-lap="rekap detail"><span>Ujian</span><select class="input" id="lapPaket"></select></label>
+            <label class="field" data-lap="rekap detail kelas mapel"><span>Kelas</span><select class="input" id="lapKelas"></select></label>
+            <label class="field" data-lap="kelas mapel"><span>Mata pelajaran</span><select class="input" id="lapMapel"></select></label>
+            <label class="field" data-lap="detail siswa"><span>Siswa</span><select class="input" id="lapSiswa"></select></label>
+            <label class="field" data-lap="rekap kelas mapel"><span>Urutkan</span>
+              <select class="input" id="lapUrut"><option value="kelas">Kelas, lalu nama</option><option value="nama">Nama</option><option value="nilai">Nilai tertinggi (peringkat)</option></select>
+            </label>
+            <label class="field"><span>KKM</span><input class="input" type="number" id="lapKKM" min="0" max="100"></label>
+            <label class="field"><span>Tanggal laporan</span><input class="input" type="date" id="lapTanggal"></label>
+          </div>
+          <div class="lap-grid">
+            <label class="check" data-lap="rekap"><input type="checkbox" id="lapBelum" checked> Tampilkan siswa yang belum/tidak ikut</label>
+            <label class="check" data-lap="detail"><input type="checkbox" id="lapTeksSoal" checked> Sertakan teks soal</label>
+            <label class="check" data-lap="detail"><input type="checkbox" id="lapKunci" checked> Tampilkan kunci &amp; pedoman</label>
+            <label class="check"><input type="checkbox" id="lapTTD" checked> Tanda tangan guru &amp; kepala sekolah</label>
+          </div>
+          <details style="margin:8px 0 14px">
+            <summary style="cursor:pointer;font-weight:800;color:var(--wood-d)">Ubah identitas tanda tangan</summary>
+            <div class="lap-grid" style="margin-top:10px">
+              <label class="field"><span>Kota</span><input class="input" id="lapKota"></label>
+              <label class="field"><span>Tahun pelajaran</span><input class="input" id="lapTP"></label>
+              <label class="field"><span>Nama guru</span><input class="input" id="lapGuru"></label>
+              <label class="field"><span>NIP guru</span><input class="input" id="lapNipGuru"></label>
+              <label class="field"><span>Nama kepala sekolah</span><input class="input" id="lapKepsek"></label>
+              <label class="field"><span>NIP kepala sekolah</span><input class="input" id="lapNipKepsek"></label>
+            </div>
+            <p class="small muted">Nilai bawaan diambil dari sheet PENGATURAN.</p>
+          </details>
+          <button class="btn btn-red btn-lg" type="submit">📄 Buat laporan</button>
+        </form>
+      </div>
+
+      <div class="board tabpane hidden" id="t-token">
+        <h3 class="board-title" style="font-size:1.2rem">Token paket ini</h3>
+        <p class="board-sub">Siswa harus menekan <b>Perbarui data</b> (saat ada internet) setelah token baru dibuat, agar token bisa dipakai offline.</p>
+        <div class="table-wrap" style="margin-bottom:18px">
+          <table class="tbl" id="tblToken">
+            <thead><tr><th>Token</th><th>Mulai</th><th>Selesai</th><th>Status</th><th>Keterangan</th><th>Maks Pelanggaran</th><th>Token Pemulihan</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <form id="formToken" class="stack">
+          <h3 class="board-title" style="font-size:1.2rem">Buat token baru</h3>
+          <div class="row">
+            <label class="field" style="flex:1 1 120px"><span>Token</span>
+              <input class="input" id="tkKode" maxlength="12" required style="text-transform:uppercase">
+            </label>
+            <label class="field" style="flex:1 1 180px"><span>Mulai</span>
+              <input class="input" type="datetime-local" id="tkMulai" required>
+            </label>
+            <label class="field" style="flex:1 1 180px"><span>Selesai</span>
+              <input class="input" type="datetime-local" id="tkSelesai" required>
+            </label>
+          </div>
+          <div class="row">
+            <label class="field" style="flex:1 1 120px"><span>Maks Pelanggaran</span>
+              <input class="input" type="number" id="tkMaks" min="1" max="10" value="3" required>
+            </label>
+            <label class="field" style="flex:1 1 120px"><span>Token Pemulihan</span>
+              <input class="input" id="tkPemulihan" maxlength="12" required style="text-transform:uppercase" placeholder="Misal: PML123">
+            </label>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-wood" id="btnAcakToken">Buat kode acak</button>
+            <button type="submit" class="btn btn-green">Simpan token</button>
+            <button type="button" class="btn btn-blue hidden" id="btnBatalToken">Batal Edit</button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- DATA SISWA -->
+      <div class="board tabpane hidden" id="t-master-siswa">
+        <h3 class="board-title">Data Siswa</h3>
+        <div class="toolbar-guru">
+          <button class="btn btn-green btn-sm" id="btnTambahSiswa">Tambah Siswa</button>
+          <button class="btn btn-blue btn-sm" id="btnImportSiswa">Import CSV / Paste Excel</button>
+          <button class="btn btn-wood btn-sm" id="btnTemplateSiswa">Template CSV</button>
+          <input class="input" id="cariMasterSiswa" placeholder="Cari username / nama…">
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tblMasterSiswa">
+            <thead><tr><th>Username</th><th>Password</th><th>Nama</th><th>Kelas</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- PAKET SOAL -->
+      <div class="board tabpane hidden" id="t-master-paket">
+        <h3 class="board-title">Paket Soal</h3>
+        <div class="toolbar-guru">
+          <button class="btn btn-green btn-sm" id="btnTambahPaket">Tambah Paket</button>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tblMasterPaket">
+            <thead><tr><th>ID Paket</th><th>Nama Ujian</th><th>Mapel</th><th>Kelas</th><th>Mode</th><th>Durasi</th><th>Acak Soal</th><th>Acak Opsi</th><th>Tampil Nilai</th><th>Aktif</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- BANK SOAL -->
+      <div class="board tabpane hidden" id="t-master-soal">
+        <h3 class="board-title">Bank Soal</h3>
+        <div class="toolbar-guru">
+          <select class="input" id="selMasterPaketSoal"></select>
+          <button class="btn btn-green btn-sm" id="btnTambahSoal">Tambah Soal</button>
+          <button class="btn btn-blue btn-sm" id="btnImportSoal">Import Soal CSV / Paste Excel</button>
+          <button class="btn btn-wood btn-sm" id="btnTemplateSoal">Template CSV</button>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tblMasterSoal">
+            <thead><tr><th>No</th><th>Tipe</th><th>Soal</th><th>Gambar</th><th>Skor</th><th>Waktu</th><th>Aksi</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toasts" aria-live="polite"></div>
+  <script src="assets/common.js"></script>
+  <script src="assets/laporan.js"></script>
+  <script src="assets/guru.js"></script>
+</body>
+</html>
